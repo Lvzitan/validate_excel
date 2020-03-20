@@ -11,7 +11,7 @@ const server = Hapi.server ({
     host: 'localhost',
     routes: {
         files: {
-            relativeTo: Path.join(__dirname, 'public')
+            relativeTo: Path.join(__dirname, 'uploads')
         }
     }
 });
