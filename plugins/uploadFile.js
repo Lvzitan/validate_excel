@@ -1,38 +1,50 @@
 'use strict'
 const Path = require('path');
-const Fs = require('fs');
+//const { Joi } = require('@hapi/hapi');
+//const Fs = require('fs');
 
 exports.register = (server) => {
 
-    //***this route will later be a plugin to receive uploaded files***
-    //This route accepts a submitted multipart form and saves the uploaded files to the filesystem using the built-in Node fs module
     server.route({
-        config: {
+        method: 'POST',
+        path: '/setFile',
+        options: {
             tags: ['api'],
-            //attempt to parse payload into an object
+            plugins: {
+                'hapi-swagger': {
+                    payloadType: 'form'
+                }
+            },
+            validate: {
+                payload: Joi.object({
+                    file: Joi.any()
+                    .meta({ swaggerType: 'file' })
+                    .description('xlsx file')
+                })
+            },
             payload: {
-                parse: true,
-                output: 'file',
                 maxBytes: 10000000
             }
         },
-        method: 'POST',
-        path: '/upload', 
-        handler: function(request, reply) {
-            //the uploaded file's name
-            const uploadName = Path.basename(request.payload.upload.filename);
-            //path to saved temporary file
-            const uploadPath = request.payload.upload.path;
-            //destination path on local filesystem to move uploaded file to
-            const destination = Path.join(__dirname, 'uploads', uploadName);
+        handler: async (request, reply) => {
+            // //Path for desired folder
+            // const uploads = './uploads/';
+            // //Create dir if not exists
+            // if (!fs.existsSync(uploads)) {
+            //     await mkdir(uploads);
+            // }
 
-            //Move(rename) file from temp location into uploads directory
-            Fs.rename(uploadPath, destination, (err) => {
-                if(err){throw err;}
+            // const filepath = path.join(uploads, 'teste.xlsx');
+            const filepath = Path.join("./", 'teste.xlsx');
+            
+            //Save file on dir
+            await writeFile(filepath, request.payload.file);
 
-                reply('ok');
-            }); 
-        }       
+            //Reply ok
+            console.log("\nFinished");
+
+            return "ok";
+        }
     });
 }
 
