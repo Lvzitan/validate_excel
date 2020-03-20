@@ -16,7 +16,7 @@ const server = Hapi.server ({
     }
 });
 
-const init = async () => {
+const pluginRegister = async () => {
     //add swagger plugin for api documentation
     const swaggerOptions = {
         info: {
@@ -54,10 +54,21 @@ const init = async () => {
             return 'Something';
         }
     });
-   
+};
+
+exports.init = async () => {   
+    await pluginRegister();
+    await server.initialize();
+    return server;
+};
+
+exports.start = async () => {
+    await pluginRegister();
     await server.start();
     console.log(`Server running at: ${server.info.uri}`);
+    return server;
 };
+
 
 process.on('unhandledRejection', (err) => {
 
@@ -65,5 +76,5 @@ process.on('unhandledRejection', (err) => {
     process.exit(1);
 });
 
-init();
+exports.server = server;
 

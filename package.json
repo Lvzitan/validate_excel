@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
+    "start": "node serverStart.js",
     "clean": "rm -rf node_modules",
     "reinstall": "npm run clean && npm install"
   },
