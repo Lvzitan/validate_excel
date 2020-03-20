@@ -4,7 +4,7 @@ exports.register = (server) => {
     //serve any file requested by name
     server.route({
         method: 'GET',
-        path: '/{file*}',
+        path: '/{file*}', //*file name is passed here*
         handler: {
             directory: {
                 path: '.',

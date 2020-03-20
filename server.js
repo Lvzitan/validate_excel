@@ -4,15 +4,16 @@ const Inert = require('@hapi/inert');
 const Vision = require('@hapi/vision');
 const HapiSwagger = require('hapi-swagger');
 const Pack = require('./package');
+const Path = require('path');
 
 const server = Hapi.server ({
     port: 4000,
     host: 'localhost',
-    // routes: {
-    //     files: {
-    //         relativeTo: Path.join(__dirname, 'public')
-    //     }
-    // }
+    routes: {
+        files: {
+            relativeTo: Path.join(__dirname, 'public')
+        }
+    }
 });
 
 const init = async () => {
@@ -34,11 +35,7 @@ const init = async () => {
     ]);
 
     await server.register({
-        plugin: require('./plugins/uploadFile')
-    });
-
-    await server.register({
-        plugin: require('./plugins/validateFile')
+        plugin: require('./plugins/setFile')
     });
 
     await server.register({

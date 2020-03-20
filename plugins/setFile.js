@@ -8,6 +8,8 @@ const {
 } = require('util');
 const writeFile = promisify(fs.writeFile);
 
+const excelMath = require('../excelMath');
+
 const uploadPlugin = {
     name:'upload-xlsx',
     version: '1.0.0',
@@ -31,7 +33,7 @@ const uploadPlugin = {
                     })
                 },
                 payload: {
-                    maxBytes: 1000000000,
+                    maxBytes: 10000000,
                     output: 'stream',
                     allow: 'multipart/form-data'
                 }
@@ -49,10 +51,14 @@ const uploadPlugin = {
                 const filePath = Path.join(uploads, filename + '.xlsx');
 
                 //Save file on dir
-                await writeFile(filePath, request.payload.file)
-                
-                console.log("\nFinished uploading %s", request.payload.file.hapi.filename);
+                await writeFile(filePath, request.payload.file._data)
 
+                console.log("\nFinished uploading %s, validating...", filename);
+                
+                //validation
+                excelMath.checkMath(filePath);
+                console.log("Validated %s successfully", filename)
+                
                 return "File uploaded";
             }
         });

@@ -2,10 +2,10 @@
 
 const Excel = require('exceljs');
 
-const filePath = './public/Math.xlsx'
+//const filePath = './uploads/Math.xlsx'   NEEDS TO BE PASSED AS ARGUMENT
 
 module.exports = {
-    checkMath: function (file){
+    checkMath: function (filePath){
         var cell1;
         var cell2;
         var cell3;
