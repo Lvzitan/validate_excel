@@ -1,7 +1,12 @@
 'use strict'
 const Path = require('path');
-//const { Joi } = require('@hapi/hapi');
-//const Fs = require('fs');
+const Joi = require('@hapi/joi');
+
+const fs = require('fs');
+const {
+    promisify
+} = require('util');
+const writeFile = promisify(fs.writeFile);
 
 exports.register = (server) => {
 
@@ -23,11 +28,14 @@ exports.register = (server) => {
                 })
             },
             payload: {
-                maxBytes: 10000000
+                maxBytes: 10000000,
+                output: 'stream',
+                allow: 'multipart/form-data'
             }
         },
         handler: async (request, reply) => {
-            // //Path for desired folder
+            //Path for desired folder
+
             // const uploads = './uploads/';
             // //Create dir if not exists
             // if (!fs.existsSync(uploads)) {

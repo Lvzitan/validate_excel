@@ -57,7 +57,6 @@ const init = async () => {
             return 'Something';
         }
     });
-
    
     await server.start();
     console.log(`Server running at: ${server.info.uri}`);
