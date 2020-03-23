@@ -1,5 +1,7 @@
 'use strict'
 
+//this file is for easier testing
+
 const Excel = require('exceljs');
 
 const filePath = 'C:\\Work\\github\\uploads\\Math.xlsx';
@@ -12,29 +14,41 @@ function checkMath(filePath){
         var cell1, cell2, cell3, cell4;
 
         worksheet.addConditionalFormatting({
-            ref: 'A1:C6',
+            ref: 'A:C',
             rules: [
                 {
                     type: 'expression',
-                    formulae:['=$C1=$A1+$B1'],
+                    formulae:['=AND($C1=$A1+$B1, ISNUMBER($A1:$C1))'],
                     style: {fill: {type: 'pattern', pattern: 'solid', bgColor: {argb: 'b9ff9c'}}},
                 }
             ]
         })
 
         worksheet.addConditionalFormatting({
-            ref: 'A1:C6',
+            ref: 'A:C',
             rules: [
                 {
                     type: 'expression',
-                    formulae:['=$C1<>$A1+$B1'],
+                    formulae:['=AND($C1<>$A1+$B1, ISNUMBER($A1:$C1))'],
                     style: {fill: {type: 'pattern', pattern: 'solid', bgColor: {argb: 'eb4034'}}},
                 }
             ]
         })
 
+        worksheet.addConditionalFormatting({
+            ref: 'D:D',
+            rules: [
+                {
+                    type: 'expression',
+                    formulae:['=AND($C1<>$A1+$B1, ISNUMBER($A1:$C1))'],
+                    style: {fill: {type: 'pattern', pattern: 'solid', bgColor: {argb: 'FFA500'}}},
+                }
+            ]
+        })
+
         worksheet.eachRow(function (row){
-            
+            cell4 = row.getCell('D');
+
             row.eachCell(function (cell){
                 switch (cell.col){
                     case 1:
@@ -53,26 +67,13 @@ function checkMath(filePath){
                 } 
             });  
 
-            //validation
             if(cell3.value === cell1.value + cell2.value){
-                cell4 = row.getCell('D');
                 cell4.value = "";
             }
             else{
-                cell4 = row.getCell('D');
-                cell4.value = cell1.value + cell2.value;
-                cell4.fill={
-                    type: 'pattern',
-                    pattern:'solid',
-                    fgColor:{argb:'FF8C00'}
+                if(typeof cell1.value == 'number' && typeof cell2.value == 'number'){
+                    cell4.value = cell1.value + cell2.value;
                 }
-                cell4.border={
-                    top: {style:'thin'},
-                    left: {style:'thin'},
-                    bottom: {style:'thin'},
-                    right: {style:'thin'}
-                }
-                console.log('New corrected value: ' + (cell1.value + cell2.value));
             }
         });
 
