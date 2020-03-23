@@ -5,14 +5,15 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node serverStart.js",
+    "clean": "rm -rf node_modules",
+    "reinstall": "npm run clean && npm install"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@hapi/hapi": "18.4.1",
+    "@hapi/hapi": "18.4.0",
     "@hapi/inert": "5.2.0",
-    "@hapi/joi": "^17.1.1",
     "@hapi/vision": "5.5.2",
     "exceljs": "^3.8.1",
     "hapi-swagger": "10.0.1",

@@ -5,20 +5,18 @@ const Vision = require('@hapi/vision');
 const HapiSwagger = require('hapi-swagger');
 const Pack = require('./package');
 const Path = require('path');
-const Joi = require('@hapi/joi');
-//const fs = require('fs');
 
 const server = Hapi.server ({
     port: 4000,
     host: 'localhost',
-    // routes: {
-    //     files: {
-    //         relativeTo: Path.join(__dirname, 'public')
-    //     }
-    // }
+    routes: {
+        files: {
+            relativeTo: Path.join(__dirname, 'uploads')
+        }
+    }
 });
 
-const init = async () => {
+const pluginRegister = async () => {
     //add swagger plugin for api documentation
     const swaggerOptions = {
         info: {
@@ -36,12 +34,8 @@ const init = async () => {
         }
     ]);
 
-    // await server.register({
-    //     plugin: require('./plugins/uploadFile')
-    // });
-
     await server.register({
-        plugin: require('./plugins/validateFile')
+        plugin: require('./plugins/setFile')
     });
 
     await server.register({
@@ -60,53 +54,21 @@ const init = async () => {
             return 'Something';
         }
     });
+};
 
-    server.route({
-        method: 'POST',
-        path: '/setFile',
-        options: {
-            tags: ['api'],
-            plugins: {
-                'hapi-swagger': {
-                    payloadType: 'form'
-                }
-            },
-            validate: {
-                payload: Joi.object({
-                    file: Joi.any()
-                    .meta({ swaggerType: 'file' })
-                    .description('xlsx file')
-                })
-            },
-            payload: {
-                maxBytes: 10000000
-            }
-        },
-        handler: async (request, reply) => {
-            // //Path for desired folder
-            // const uploads = './uploads/';
-            // //Create dir if not exists
-            // if (!fs.existsSync(uploads)) {
-            //     await mkdir(uploads);
-            // }
+exports.init = async () => {   
+    await pluginRegister();
+    await server.initialize();
+    return server;
+};
 
-            // const filepath = path.join(uploads, 'teste.xlsx');
-            const filepath = Path.join("./", 'teste.xlsx');
-            
-            //Save file on dir
-            await writeFile(filepath, request.payload.file);
-
-            //Reply ok
-            console.log("\nFinished");
-
-            return "ok";
-        }
-    });
-
-   
+exports.start = async () => {
+    await pluginRegister();
     await server.start();
     console.log(`Server running at: ${server.info.uri}`);
+    return server;
 };
+
 
 process.on('unhandledRejection', (err) => {
 
@@ -114,5 +76,5 @@ process.on('unhandledRejection', (err) => {
     process.exit(1);
 });
 
-init();
+exports.server = server;
 
